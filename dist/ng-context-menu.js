@@ -21,12 +21,15 @@ angular
         scope: {
           'callback': '&contextMenu',
           'disabled': '&contextMenuDisabled',
-          'closeCallback': '&contextMenuClose'
+          'closeCallback': '&contextMenuClose',
+          'isOpen' : '='
         },
         link: function($scope, $element, $attrs) {
-          var opened = false;
+            var opened = false;
+            $scope.isOpen = opened;
 
           function open(event, menuElement) {
+              $scope.isOpen = true;
             menuElement.addClass('open');
 
             var doc = $document[0].documentElement;
@@ -65,6 +68,12 @@ angular
 
             opened = false;
           }
+
+            $scope.$watch("isOpen", function(isOpen) {
+                if (isOpen === false && ContextMenuService.menuElement) {
+                    close(ContextMenuService.menuElement);
+                }
+            });
 
           $element.bind('contextmenu', function(event) {
             if (!$scope.disabled()) {
